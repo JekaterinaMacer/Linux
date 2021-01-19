@@ -1,0 +1,421 @@
+Создать каталоги students и mentors в домашней директории, а в них — текстовые файлы students_list.txt и mentors_list.txt соответственно.
+
+### Я создала каталоги в родительской папке, это очень принципиально? 
+### Если да, то могу переделать.
+
+student@Ubuntu-MySQL-VirtualBox:/home$ pwd
+/home
+student@Ubuntu-MySQL-VirtualBox:/home$ mkdir students
+mkdir: невозможно создать каталог «students»: Отказано в доступе
+
+### почему-то не работало создание без sudo
+
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo mkdir students
+[sudo] пароль для student: 
+student@Ubuntu-MySQL-VirtualBox:/home$ pwd
+/home
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo mkdir mentors
+student@Ubuntu-MySQL-VirtualBox:/home$ cd students
+student@Ubuntu-MySQL-VirtualBox:/home/students$ touch students_list.txt
+touch: невозможно выполнить touch для 'students_list.txt': Отказано в доступе
+student@Ubuntu-MySQL-VirtualBox:/home/students$ sudo touch students_list.txt
+student@Ubuntu-MySQL-VirtualBox:/home/students$ cd ..
+student@Ubuntu-MySQL-VirtualBox:/home$ cd mentors
+student@Ubuntu-MySQL-VirtualBox:/home/mentors$ sudo touch mentors_list.txt
+student@Ubuntu-MySQL-VirtualBox:/home/mentors$ 
+
+Открыть созданные в п.1 файлы в любом текстовом редакторе и заполнить их (в соответствии с названием) списком Ваших одногруппников и наставников на данном потоке.
+
+student@Ubuntu-MySQL-VirtualBox:/home/mentors$ sudo vim mentors_list.txt 
+student@Ubuntu-MySQL-VirtualBox:/home/mentors$ more mentors_list.txt 
+Преподаватель
+Кирилл Иванов
+
+Наставник
+Андрей Осипук
+
+Наставник
+Сергей Романов
+
+Наставник
+Антон Петренко
+student@Ubuntu-MySQL-VirtualBox:/home/mentors$ 
+
+student@Ubuntu-MySQL-VirtualBox:/home/mentors$ cd ..
+student@Ubuntu-MySQL-VirtualBox:/home$ cd students
+student@Ubuntu-MySQL-VirtualBox:/home/students$ nano students_list.txt 
+student@Ubuntu-MySQL-VirtualBox:/home/students$ sudo nano students_list.txt 
+student@Ubuntu-MySQL-VirtualBox:/home/students$ sudo vim students_list.txt 
+student@Ubuntu-MySQL-VirtualBox:/home/students$ sudo nano students_list.txt 
+student@Ubuntu-MySQL-VirtualBox:/home/students$ sudo vim students_list.txt 
+student@Ubuntu-MySQL-VirtualBox:/home/students$ head students_list.txt 
+Алексей Крикунов
+
+Алексей Смирнов
+
+Павел Федоров
+
+Михаил Семичев
+
+Станислав Пурвич
+
+student@Ubuntu-MySQL-VirtualBox:/home/students$ 
+
+
+Переместите файл mentors_list.txt в папку students.
+
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo mv /home/mentors/mentors_list.txt /home/students
+student@Ubuntu-MySQL-VirtualBox:/home$ tree
+.
+├── mentors
+├── student
+│   ├── examples.desktop
+│   ├── Видео
+│   ├── Документы
+│   ├── Загрузки
+│   ├── Изображения
+│   ├── Музыка
+│   ├── Общедоступные
+│   ├── Рабочий стол
+│   └── Шаблоны
+└── students
+    ├── mentors_list.txt
+    └── students_list.txt
+
+11 directories, 3 files
+student@Ubuntu-MySQL-VirtualBox:/home$ 
+
+Удалите папку mentors.
+
+student@Ubuntu-MySQL-VirtualBox:/home$ rm -rf mentors
+rm: невозможно удалить 'mentors': Отказано в доступе
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo rm -rf mentors
+student@Ubuntu-MySQL-VirtualBox:/home$ tree
+.
+├── student
+│   ├── examples.desktop
+│   ├── Видео
+│   ├── Документы
+│   ├── Загрузки
+│   ├── Изображения
+│   ├── Музыка
+│   ├── Общедоступные
+│   ├── Рабочий стол
+│   └── Шаблоны
+└── students
+    ├── mentors_list.txt
+    └── students_list.txt
+
+10 directories, 3 files
+student@Ubuntu-MySQL-VirtualBox:/home$ 
+
+Переименуйте папку students в students_and_mentors.
+Удалите папку students_and_mentors вместе с содержимым.
+
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo mv students students_and_mentors
+student@Ubuntu-MySQL-VirtualBox:/home$ tree
+.
+├── student
+│   ├── examples.desktop
+│   ├── Видео
+│   ├── Документы
+│   ├── Загрузки
+│   ├── Изображения
+│   ├── Музыка
+│   ├── Общедоступные
+│   ├── Рабочий стол
+│   └── Шаблоны
+└── students_and_mentors
+    ├── mentors_list.txt
+    └── students_list.txt
+
+10 directories, 3 files
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo rm -rf students_and_mentors
+student@Ubuntu-MySQL-VirtualBox:/home$ tree
+.
+└── student
+    ├── examples.desktop
+    ├── Видео
+    ├── Документы
+    ├── Загрузки
+    ├── Изображения
+    ├── Музыка
+    ├── Общедоступные
+    ├── Рабочий стол
+    └── Шаблоны
+
+9 directories, 1 file
+student@Ubuntu-MySQL-VirtualBox:/home$ 
+
+
+Подключитесь к машине с Linux по протоколу SSH.
+(*) Используя дополнительный материал, настроить авторизацию по SSH с использованием ключей.
+
+
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo systemctl enable ssh
+Synchronizing state of ssh.service with SysV init with /lib/systemd/systemd-sysv-install...
+Executing /lib/systemd/systemd-sysv-install enable ssh
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo systemctl start sshd
+student@Ubuntu-MySQL-VirtualBox:/home$ sudo systemctl status sshd
+● ssh.service - OpenBSD Secure Shell server
+   Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enab
+   Active: active (running) since Вт 2020-12-29 21:58:21 MSK; 2 weeks 3 days ago
+ Main PID: 816 (sshd)
+   CGroup: /system.slice/ssh.service
+           └─816 /usr/sbin/sshd -D
+
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Received SIGHUP; restarting.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloaded OpenBSD Secure Shel
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on 0.0.0.0 p
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on :: port 2
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloading OpenBSD Secure She
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Received SIGHUP; restarting.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on 0.0.0.0 p
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on :: port 2
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloaded OpenBSD Secure Shel
+янв 15 23:36:41 Ubuntu-MySQL-VirtualBox systemd[1]: Started OpenBSD Secure Shell
+lines 1-17/17 (END)...skipping...
+● ssh.service - OpenBSD Secure Shell server
+   Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enabled)
+   Active: active (running) since Вт 2020-12-29 21:58:21 MSK; 2 weeks 3 days ago
+ Main PID: 816 (sshd)
+   CGroup: /system.slice/ssh.service
+           └─816 /usr/sbin/sshd -D
+
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Received SIGHUP; restarting.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloaded OpenBSD Secure Shell server.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on 0.0.0.0 port 22.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on :: port 22.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloading OpenBSD Secure Shell server.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Received SIGHUP; restarting.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on 0.0.0.0 port 22.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on :: port 22.
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloaded OpenBSD Secure Shell server.
+янв 15 23:36:41 Ubuntu-MySQL-VirtualBox systemd[1]: Started OpenBSD Secure Shell server.
+~
+~
+~
+~
+~
+~
+~
+~
+~
+lines 1-17/17 (END)
+
+
+
+
+
+
+● ssh.service - OpenBSD Secure Shell server
+   Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset
+   Active: active (running) since Вт 2020-12-29 21:58:21 MSK; 2 weeks 3 da
+ Main PID: 816 (sshd)
+   CGroup: /system.slice/ssh.service
+           └─816 /usr/sbin/sshd -D
+
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Received SIGHUP; restar
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloaded OpenBSD Secur
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on 0.0
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on :: 
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloading OpenBSD Secu
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Received SIGHUP; restar
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on 0.0
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox sshd[816]: Server listening on :: 
+янв 13 22:53:56 Ubuntu-MySQL-VirtualBox systemd[1]: Reloaded OpenBSD Secur
+янв 15 23:36:41 Ubuntu-MySQL-VirtualBox systemd[1]: Started OpenBSD Secure
+~
+~
+~
+~
+~
+~
+~
+~
+~
+lines 1-17/17 (END)
+
+student@Ubuntu-MySQL-VirtualBox:/home$ hostname -I
+10.0.2.15 
+
+### У меня на мак не пингуется
+### пробовала и через iTerm и через терминал и под суперпользователем
+
+Last login: Mon Dec 28 19:17:41 on ttys000
+ekaterina@MacBook-Pro-Ekaterina ~ % ping 10.0.2.15
+PING 10.0.2.15 (10.0.2.15): 56 data bytes
+92 bytes from 84.116.254.17: Destination Net Unreachable
+Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst
+ 4  5  00 5400 4eef   0 0000  3f  01 5fb1 192.168.0.82  10.0.2.15
+
+student@Ubuntu-MySQL-VirtualBox:/home$ ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 08:00:27:73:27:a8 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic enp0s3
+       valid_lft 72671sec preferred_lft 72671sec
+    inet6 fe80::6f3b:940f:2721:eb9b/64 scope link 
+       valid_lft forever preferred_lft forever
+
+ekaterina@MacBook-Pro-Ekaterina ~ % ssh student@127.0.0.1
+ssh: connect to host 127.0.0.1 port 22: Connection refused
+ekaterina@MacBook-Pro-Ekaterina ~ % sudo su
+Password:
+sh-3.2# ssh student@127.0.0.1
+ssh: connect to host 127.0.0.1 port 22: Connection refused
+sh-3.2# ssh student@10.0.2.15
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+В качестве решения необходимо прислать текстовый файл (*.txt) с набором используемых команд и их результатами (можно скопировать текст из консоли).
+
+Преподавательский состав
+
+Преподаватель
+Кирилл Иванов
+
+Наставник
+Андрей Осипук
+
+Наставник
+Сергей Романов
+
+Наставник
+Антон Петренко
+
+Одногруппники • 56
+
+Алексей Крикунов
+
+Алексей Смирнов
+
+Павел Федоров
+
+Михаил Семичев
+
+Станислав Пурвич
+
+Сергей Терентьев
+
+Ирина Ходаковская
+
+Ксения Графская
+
+Руслан Иванков
+
+Наталья Чехович
+
+Екатерина Панкратова
+
+Оксана Цуверкалова
+
+Руслан Васильев
+
+Иосиф Лобанцев
+
+Ekaterina Saukova
+
+Анастасия Куприянова
+
+Сергей Лебедев
+
+Любовь Смирнова
+
+Захар Хлебцов
+
+Ольга Однолеткова
+
+Анжела Смольникова
+
+Екатерина Кузнецова
+
+Марина Буянова
+
+Саида Жукова
+
+Алексей Поляков
+
+Pavel Lapin
+
+Лидия Дьякова
+
+Степан Барчан
+
+Назар Войко
+
+Иван Ключко
+
+Александр Кузнецов
+
+Артём Шидловский
+
+Валерия Зима
+
+Савва Разиньков
+
+Денис Ртищев
+
+Алена Скробова
+
+Антон Бондаренко
+
+Александр Филатов
+
+Олег Сафронов
+
+Евгений Климов
+
+Михаил Ардальянов
+
+Михас Лампас
+
+Екатерина Крупкина
+
+Владимир казанцев
+
+Влад Червинский
+
+Алексей Копылков
+
+Марина Пермякова
+
+Евгений Тищенко
+
+Алексей Рыбак
+
+Екатерина Силантьева
+
+Сергей Немов
+
+Евгения Тузовская
+
+Сергей Савиных
+
+Александр Кириллов
+
+Наталья Брыжина
+
+Надежда Юкина
