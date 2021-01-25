@@ -1,0 +1,156 @@
+1. Вывести на экран 3 раза имя пользователя, от которого запускается команда.
+
+admin@Ubuntu-MySQL-VirtualBox:~/only_w_name$ echo '#!/bin/bash' > user.sh
+admin@Ubuntu-MySQL-VirtualBox:~/only_w_name$ nano user.sh
+admin@Ubuntu-MySQL-VirtualBox:~/only_w_name$ bash user.sh
+1 USER NAME IS  admin
+2 USER NAME IS  admin
+3 USER NAME IS  admin
+
+#!/bin/bash
+for n in {1,2,3};
+do 
+echo $n  "USER NAME IS " $USER ;
+done
+
+2. Вывести с помощью цикла while все четные числа от 0 до 100 включительно.
+
+admin@Ubuntu-MySQL-VirtualBox:~/only_w_name$ nano hundred.sh 
+admin@Ubuntu-MySQL-VirtualBox:~/only_w_name$ bash hundred.sh 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+
+#!/bin/bash
+x=1
+while [ $x -lt 101 ]
+do
+echo $x
+x=$(( $x + 1 ))
+done
+
+
+3. Создать с помощью nano файл test.txt. Настроить автоматический бэкап этого файла раз в 10 минут в файл с названием test.txt.bak с использованием cron.
+
+
+admin@Ubuntu-MySQL-VirtualBox:~/only_w_name$ nano test.txt
+
+admin@Ubuntu-MySQL-VirtualBox:~/only_w_name$ crontab -e
+Select an editor.  To change later, run 'select-editor'.
+  1. /bin/ed
+  2. /bin/nano        <---- easiest
+  3. /usr/bin/mcedit
+  4. /usr/bin/vim.tiny
+Choose 1-4 [2]: 2
+crontab: installing new crontab
+
+0,10,20,30,40,50 * * * * cp test.txt test.txt.bak
+
+admin@Ubuntu-MySQL-VirtualBox:/etc$ cd rsyslog.d
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ ls
+20-ufw.conf  50-default.conf
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo nano 50-default.conf 
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo service rsyslog restart
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo service cron restart
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ tail /var/log/cron.log
+tail: невозможно открыть '/var/log/cron.log' для чтения: Отказано в доступе
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ mc
