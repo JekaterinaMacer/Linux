@@ -1,0 +1,31 @@
+1. Потоки ввода/вывода. Создать файл, используя команду echo. Используя команду cat, прочитать содержимое каталога etc, ошибки перенаправить в отдельный файл.
+
+admin@Ubuntu-MySQL-VirtualBox:~$ echo 'new file' > mistakes.txt
+student@Ubuntu-MySQL-VirtualBox:/$ cat etc
+cat: etc: Это каталог
+student@Ubuntu-MySQL-VirtualBox:~$ cat >> mistake.txt
+cat: etc: Это каталог
+student@Ubuntu-MySQL-VirtualBox:~$ head mistake.txt
+cat: etc: Это каталог
+
+???
+student@Ubuntu-MySQL-VirtualBox:~$ find / -type f -name *.txt 1>history.txt
+find: пути должны быть перед выражением: mistake.txt
+Использование: find [-H] [-L] [-P] [-Oуровень] [-D help|tree|search|stat|rates|opt|exec|time] [путь…] [выражение]
+???
+student@Ubuntu-MySQL-VirtualBox:~$ find / -type c -name etc 2 > mistake.txt
+find: пути должны быть перед выражением: 2
+Использование: find [-H] [-L] [-P] [-Oуровень] [-D help|tree|search|stat|rates|opt|exec|time] [путь…] [выражение]
+???
+student@Ubuntu-MySQL-VirtualBox:~$ cat > mistake.txt | cat etc
+cat: etc: Нет такого файла или каталога
+cat: etc: Нет такого файла или каталога
+???
+student@Ubuntu-MySQL-VirtualBox:/$ cat etc | cat > home/student/mistake.txt
+cat: etc: Это каталог
+
+2. Конвейер (pipeline). Использовать команду cut на вывод длинного списка каталога, чтобы отобразить только права доступа к файлам. Затем отправить в конвейере этот вывод на sort и uniq, чтобы отфильтровать все повторяющиеся строки.
+
+3. Управление процессами.) Изменить конфигурационный файл службы SSH: /etc/ssh/sshd_config, отключив аутентификацию по паролю PasswordAuthentication no. Выполните рестарт службы systemctl restart sshd (service sshd restart), верните аутентификацию по паролю, выполните reload службы systemctl reload sshd (services sshd reload). В чём различие между действиями restart и reload? Создайте файл при помощи команды cat > file_name, напишите текст и завершите комбинацией ctrl+d. Какой сигнал передадим процессу?
+
+4. Сигналы процессам. Запустите mc. Используя ps, найдите PID процесса, завершите процесс, передав ему сигнал 9.
