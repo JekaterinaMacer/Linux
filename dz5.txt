@@ -1,0 +1,149 @@
+1. Создать файл file1 и наполнить его произвольным содержимым. 
+kirill@kirill-Virtual-Machine:~/lesson$ echo '123' > file1
+
+Скопировать его в file2. 
+kirill@kirill-Virtual-Machine:~/lesson$ cp file1 file2
+
+Создать символическую ссылку file3 на file1. 
+kirill@kirill-Virtual-Machine:~/lesson$ ln -s file1 file3
+
+Создать жёсткую ссылку file4 на file1. 
+kirill@kirill-Virtual-Machine:~/lesson$ ln file1 file4
+
+Посмотреть, какие inode у файлов. 
+kirill@kirill-Virtual-Machine:~/lesson$ ls -li
+итого 12
+529730 -rw-rw-r-- 2 kirill kirill 4 dec  6 13:29 file1
+529731 -rw-rw-r-- 1 kirill kirill 4 dec  6 13:32 file2
+529732 lrwxrwxrwx 1 kirill kirill 5 dec  6 13:33 file3 -> file1
+529730 -rw-rw-r-- 2 kirill kirill 4 dec  6 13:29 file4
+
+
+Удалить file1. Что стало с остальными созданными файлами? 
+Ответ: Жёсткая ссылка продолжает вести на фйал. А символическая ссылка сломалась.
+Попробовать вывести их на экран.
+kirill@kirill-Virtual-Machine:~/lesson$ cat file4
+123
+kirill@kirill-Virtual-Machine:~/lesson$ cat file3
+cat: file3: Нет такого файла или каталога
+kirill@kirill-Virtual-Machine:~/lesson$
+
+
+2. Дать созданным файлам другие, произвольные имена. 
+kirill@kirill-Virtual-Machine:~/lesson$ mv file1 file11
+kirill@kirill-Virtual-Machine:~/lesson$ mv file2 file22
+Создать новую символическую ссылку. 
+kirill@kirill-Virtual-Machine:~/lesson$ ln -s file11 file11_slink
+Переместить ссылки в другую директорию.
+kirill@kirill-Virtual-Machine:~/lesson$ mkdir subdir
+kirill@kirill-Virtual-Machine:~/lesson$ mv file11_slink subdir/file11_slink
+kirill@kirill-Virtual-Machine:~/lesson$ tree
+.
+├── file11
+├── file22
+└── subdir
+    └── file11_slink -> file11
+
+kirill@kirill-Virtual-Machine:~/lesson/subdir$ cat file11_slink
+cat: file11_slink: Нет такого файла или каталога
+--- после переноса ссылка перестала работать
+
+
+3. Создать два произвольных файла. 
+Первому присвоить права на чтение и запись для владельца и группы, только на чтение — для всех. 
+Второму присвоить права на чтение и запись только для владельца.
+kirill@kirill-Virtual-Machine:~/lesson$ echo "aaa" > file1
+kirill@kirill-Virtual-Machine:~/lesson$ echo "bbb" > file2
+kirill@kirill-Virtual-Machine:~/lesson$ ls -l
+итого 8
+-rw-rw-r-- 1 kirill kirill 4 dec  6 16:42 file1
+-rw-rw-r-- 1 kirill kirill 4 dec  6 16:42 file2
+
+kirill@kirill-Virtual-Machine:~/lesson$ chmod 664 file1
+kirill@kirill-Virtual-Machine:~/lesson$ chmod u=rw,g=,o= file2
+kirill@kirill-Virtual-Machine:~/lesson$ ls -l
+итого 8
+-rw-rw-r-- 1 kirill kirill 4 dec  6 16:42 file1
+-rw------- 1 kirill kirill 4 dec  6 16:42 file2
+
+4. Создать пользователя, обладающего возможностью выполнять действия от имени суперпользователя.
+kirill@kirill-Virtual-Machine:~/lesson$ sudo useradd -m -s /bin/bash user1
+kirill@kirill-Virtual-Machine:~/lesson$ sudo usermod -aG sudo user1
+
+5. * Создать группу developer и нескольких пользователей, входящих в неё. 
+kirill@kirill-Virtual-Machine:~/lesson$ sudo useradd -m -s /bin/bash user2
+kirill@kirill-Virtual-Machine:~/lesson$ sudo groupadd developer
+kirill@kirill-Virtual-Machine:~/lesson$ sudo usermod -aG developer user1
+kirill@kirill-Virtual-Machine:~/lesson$ sudo usermod -aG developer user2
+
+Создать директорию для совместной работы. 
+kirill@kirill-Virtual-Machine:~/lesson$ mkdir dev_dir
+
+Сделать так, чтобы созданные одними пользователями файлы могли изменять другие пользователи этой группы.
+
+--- проверяем тукущие настройки
+kirill@kirill-Virtual-Machine:~/lesson$ getfacl dev_dir/
+# file: dev_dir/
+# owner: kirill
+# group: kirill
+user::rwx
+group::rwx
+other::r-x
+
+--- устанавливаем настройку доступа к уже имеющимся файлам, для группы "developer"
+kirill@kirill-Virtual-Machine:~/lesson$ setfacl -m g:developer:rw dev_dir/*
+--- устанавливаем настройку доступа для новых файлов, для группы "developer"
+kirill@kirill-Virtual-Machine:~/lesson$ setfacl -m d:g:developer:rw dev_dir/
+kirill@kirill-Virtual-Machine:~/lesson$ getfacl dev_dir/
+# file: dev_dir/
+# owner: kirill
+# group: kirill
+user::rwx
+group::rwx
+group:developer:rwx
+mask::rwx
+other::r-x
+default:user::rwx
+default:group::rwx
+default:group:developer:rw-
+default:mask::rwx
+default:other::r-x
+
+6. * Создать в директории для совместной работы поддиректорию для обмена файлами, но чтобы удалять файлы могли только их создатели.
+kirill@kirill-Virtual-Machine:~/lesson/dev_dir$ mkdir files
+--- назначаем права, чтобы другие пользователи из группы developer могли войти в дерикторию
+kirill@kirill-Virtual-Machine:~/lesson/dev_dir$ setfacl -m g:developer:rwx files/
+--- добавляем sticky bit
+kirill@kirill-Virtual-Machine:~/lesson/dev_dir$ chmod +t files/
+
+
+kirill@kirill-Virtual-Machine:~/lesson/dev_dir$ sudo su user1
+user1@kirill-Virtual-Machine:/home/kirill/lesson/dev_dir$ cd files/
+user1@kirill-Virtual-Machine:/home/kirill/lesson/dev_dir/files$ > user1_f1
+user1@kirill-Virtual-Machine:/home/kirill/lesson/dev_dir/files$ ls -l
+итого 0
+-rw-rw-r--+ 1 kirill kirill 0 dec  6 19:35 kirill_f1
+-rw-rw-r--+ 1 kirill kirill 0 dec  6 19:35 kirill_f2
+-rw-rw-r--+ 1 user1  user1  0 dec  6 19:43 user1_f1
+
+user1@kirill-Virtual-Machine:/home/kirill/lesson/dev_dir/files$ rm kirill_f1
+rm: невозможно удалить 'kirill_f1': Операция не позволена
+
+--- а свои файлы удаляются
+user1@kirill-Virtual-Machine:/home/kirill/lesson/dev_dir/files$ rm user1_f1
+user1@kirill-Virtual-Machine:/home/kirill/lesson/dev_dir/files$ ls -l
+итого 0
+-rw-rw-r--+ 1 kirill kirill 0 dec  6 19:35 kirill_f1
+-rw-rw-r--+ 1 kirill kirill 0 dec  6 19:35 kirill_f2
+
+7. * Создать директорию, в которой есть несколько файлов. 
+Сделать так, чтобы открыть файлы можно было, только зная имя файла, а через ls список файлов посмотреть было нельзя.
+
+kirill@kirill-Virtual-Machine:~/lesson$ > secret_file
+kirill@kirill-Virtual-Machine:~/lesson$ ls
+dev_dir  file1  file2  kirill_file1  kirill_file6  secret_file
+
+-- добавить в начале файла точку
+kirill@kirill-Virtual-Machine:~/lesson$ mv secret_file .secret_file
+kirill@kirill-Virtual-Machine:~/lesson$ ls
+dev_dir  file1  file2  kirill_file1  kirill_file6
