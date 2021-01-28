@@ -1,0 +1,106 @@
+1. Подключить репозиторий с nginx любым удобным способом, установить nginx и потом удалить nginx, используя утилиту dpkg.
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo apt list nginx
+Вывод списка… Готово
+nginx/xenial-updates,xenial-updates,xenial-security,xenial-security 1.10.3-0ubuntu0.16.04.5 all
+N: Есть 1 дополнительная версия. Используйте «-a» для просмотра.
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo apt install nginx
+Чтение списков пакетов… Готово
+Построение дерева зависимостей       
+Чтение информации о состоянии… Готово
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo systemctl start nginx
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo systemctl status nginx
+● nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled
+   Active: active (running) since Чт 2021-01-28 17:29:16 MSK; 1min 21s ago
+ Main PID: 29412 (nginx)
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo apt-add-repository "nginx"
+Ошибка: неправильный 'nginx'
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo nano /etc/apt/sources.list
+
+deb https://nginx.org/packages/debian/ buster nginx
+deb-src https://nginx.org/packages/debian/ buster nginx
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ wget --quiet -O - https://nginx.org/packages/keys/nginx_signing.key | apt-key add -
+ERROR: This command can only be used by root.
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ curl -fsSL https://nginx.org/packages/keys/nginx_signing.key | apt-key add -
+ERROR: This command can only be used by root.
+Программа 'curl' на данный момент не установлена. Вы можете установить её, выполнив:
+sudo apt install curl
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo apt install curl
+Чтение списков пакетов… Готово
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo curl -fsSL https://nginx.org/packages/keys/nginx_signing.key | apt-key add -
+ERROR: This command can only be used by root.
+(23) Failed writing body
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ dpkg -l | grep nginx
+ii  nginx                                       1.10.3-0ubuntu0.16.04.5                         all          small, powerful, scalable web/proxy server
+ii  nginx-common                                1.10.3-0ubuntu0.16.04.5                         all          small, powerful, scalable web/proxy server - common files
+ii  nginx-core                                  1.10.3-0ubuntu0.16.04.5                         amd64        nginx web/proxy server (core version)
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo dpkg -r nginx
+(Чтение базы данных … на данный момент установлено 258611 файлов и каталогов.)
+Удаляется nginx (1.10.3-0ubuntu0.16.04.5) …
+
+
+2. Установить пакет на свой выбор, используя snap.
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo apt install snapd
+Чтение списков пакетов… Готово
+Построение дерева зависимостей       
+Чтение информации о состоянии… Готово
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo snap find zip
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo snap install ark
+2021-01-28T17:05:18+03:00 INFO Waiting for automatic snapd restart...
+ark 19.08.0 from KDE✓ installed
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ snap list
+Name                     Version   Rev    Tracking       Publisher   Notes
+ark                      19.08.0   6      latest/stable  kde✓        -
+core18                   20201210  1944   latest/stable  canonical✓  base
+kde-frameworks-5-core18  5.61.0    32     latest/stable  kde✓        -
+snapd                    2.48.2    10707  latest/stable  canonical✓  snapd
+
+
+3. Настроить iptables: разрешить подключения только на 22-й и 
+80-й порты.
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo apt install iptables
+Чтение списков пакетов… Готово
+Построение дерева зависимостей       
+Чтение информации о состоянии… Готово
+Уже установлен пакет iptables самой новой версии (1.6.0-2ubuntu3).
+Следующие пакеты устанавливались автоматически и больше не требуются:
+  linux-headers-4.15.0-45 linux-headers-4.15.0-45-generic
+  linux-image-4.15.0-45-generic linux-modules-4.15.0-45-generic
+  linux-modules-extra-4.15.0-45-generic snapd-login-service
+Для их удаления используйте «sudo apt autoremove».
+Обновлено 0 пакетов, установлено 0 новых пакетов, для удаления отмечено 0 пакетов, и 81 пакетов не обновлено.
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ hostname -I
+192.168.0.29 2a02:a310:243:7080:a43a:8a91:f7cd:b477 2a02:a310:243:7080:b155:2bb7:a282:2cde 2a02:a310:243:7080:1386:3ae5:468b:f1bc 
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo iptables -A OUTPUT -p tcp --dport 22,80 -j ACCEPT
+iptables v1.6.0: invalid port/service `22,80' specified
+Try `iptables -h' or 'iptables --help' for more information.
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo iptables -A OUTPUT -p tcp --dport 443 -j REJECT 
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:http
+REJECT     tcp  --  anywhere             anywhere             tcp dpt:https reject-with icmp-port-unreachable
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ 
+
+
+4. * Настроить проброс портов локально с порта 80 на порт 8080.
+
+admin@Ubuntu-MySQL-VirtualBox:/etc/rsyslog.d$ sudo iptables -A PREROUTING -t nat -p tcp --dport 80 -j REDIRECT --to-ports 8080
+
+
